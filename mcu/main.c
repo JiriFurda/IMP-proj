@@ -50,6 +50,43 @@
 char last_ch; //naposledy precteny znak
 char char_cnt;
 
+int field[8][8];
+
+void field_print(void)
+{
+  int row;
+  int col;
+
+  term_send_crlf();
+
+  for(row = 0; row < 8; row++)
+  {
+    for(col = 0; col < 8; col++)
+    {
+      if(field[row][col])
+        term_send_str("#");
+      else
+        term_send_str("_");
+    }
+
+    term_send_crlf();
+  }
+}
+
+void field_reset(void)
+{
+  int row;
+  int col;
+
+  for(row = 0; row < 8; row++)
+  {
+    for(col = 0; col < 8; col++)
+    {
+      field[row][col] = 0;
+    }
+  }
+}
+
 
 /*******************************************************************************
  * Vypis uzivatelske napovedy (funkce se vola pri vykonavani prikazu "help")
@@ -129,6 +166,9 @@ int main(void)
 
   set_led_d6(1);                       // rozsviceni D6
   set_led_d5(1);                       // rozsviceni D5
+
+  field_reset();
+  field_print();
 
   while (1)
   {
