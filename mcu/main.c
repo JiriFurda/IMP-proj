@@ -301,6 +301,36 @@ void shape_spawn(void)
     sCurr = 2;
 }
 
+
+void shape_rotate(void)
+{
+    int attempts;
+    int row;
+    int col;
+    int newRotation;
+    int failed = 1; // 1 to pass the first iteration
+
+    for(attempts = 1; attempts < 4 && failed; attempts++)
+    {
+        failed = 0;
+        newRotation = (rotation+attempts) % 4;
+
+        for(row = 0; row < 4 && !failed; row++)
+        {
+            for(col = 0; col < 4 && !failed; col++)
+            {
+                if(shapes[sCurr][newRotation][row][col] == 1)
+                    if(field[sRow+row][sCol+col])
+                        failed = 1;
+            }
+        }
+    }
+
+    if(!failed)
+        rotation = newRotation;
+}
+
+
 int shape_move(int rowChange, int colChange)
 {
     int row;
@@ -347,7 +377,7 @@ int keyboard_idle()
                 break;
 
             case '2':
-                rotation = (rotation+1) % 4;
+                shape_rotate();
                 break;
 
             case '5':
