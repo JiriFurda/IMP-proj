@@ -50,43 +50,94 @@
 char last_ch; //naposledy precteny znak
 char char_cnt;
 
-int field[8][8];
+int field[9][10] =
+    {
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+    };
+
+//int shape;
+int rotation;
+int sRow;
+int sCol;
+
+int shape[4][4][4] =
+    {
+        {
+            {0, 0, 0, 0},
+            {1, 1, 1, 1},
+            {0, 0, 0, 0},
+            {0, 0, 0, 0}
+        },
+        {
+            {0, 0, 1, 0},
+            {0, 0, 1, 0},
+            {0, 0, 1, 0},
+            {0, 0, 1, 0}
+        },
+        {
+            {0, 0, 0, 0},
+            {0, 0, 0, 0},
+            {1, 1, 1, 1},
+            {0, 0, 0, 0}
+        },
+        {
+            {0, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 1, 0, 0},
+            {0, 1, 0, 0}
+        }
+    };
+
+int is_occupied(int row, int col)
+{
+    if(field[row][col] == 1)
+        return 1;
+
+
+    if(row >= sRow && row < sRow+4 && col >= sCol && col < sCol+4)
+        //return 1;
+        return shape[rotation][row-sRow][col-sCol];
+
+    return 0;
+}
 
 void field_print(void)
 {
-  int row;
-  int col;
-
-  term_send_crlf();
-
-  for(row = 0; row < 8; row++)
-  {
-    for(col = 0; col < 8; col++)
-    {
-      if(field[row][col])
-        term_send_str("#");
-      else
-        term_send_str("_");
-    }
-
     term_send_crlf();
-  }
-}
 
-void field_reset(void)
-{
-  int row;
-  int col;
+    int row;
+    int col;
 
-  for(row = 0; row < 8; row++)
-  {
-    for(col = 0; col < 8; col++)
+
+
+    for(row = 0; row < 8; row++)
     {
-      field[row][col] = 0;
+        for(col = 1; col < 9; col++)
+        {
+            if(is_occupied(row, col))
+                term_send_str("#");
+            else
+                term_send_str("_");
+        }
+
+        term_send_crlf();
     }
-  }
 }
 
+void shape_spawn(void)
+{
+    rotation = 0;
+    sRow = 0;
+    sCol = 3;
+}
 
 /*******************************************************************************
  * Vypis uzivatelske napovedy (funkce se vola pri vykonavani prikazu "help")
@@ -101,34 +152,34 @@ void print_user_help(void)
 *******************************************************************************/
 int keyboard_idle()
 {
-  char ch;
-  ch = key_decode(read_word_keyboard_4x4());
-  if (ch != last_ch) 
-  {
-    last_ch = ch;
-    if (ch != 0) 
+    char ch;
+    ch = key_decode(read_word_keyboard_4x4());
+    if (ch != last_ch)
     {
-      term_send_crlf();
-      term_send_str("Na klavesnici byla stisknuta klavesa \'");
-      term_send_char(ch);
-      term_send_char('\'');
-      term_send_crlf();
-      term_send_str(" >");
+        last_ch = ch;
+        if (ch != 0)
+        {
+            term_send_crlf();
+            term_send_str("Na klavesnici byla stisknuta klavesa \'");
+            term_send_char(ch);
+            term_send_char('\'');
+            term_send_crlf();
+            term_send_str(" >");
 
-      if (char_cnt == 16) {
-         LCD_clear();
-         LCD_append_string("KB demo ");
-         char_cnt = 0;
-      }
-      LCD_append_char(ch);
-      if (char_cnt > 7) {
-         LCD_rotate();
-      }
-      char_cnt++;
-      
+            if (char_cnt == 16) {
+                LCD_clear();
+                LCD_append_string("KB demo ");
+                char_cnt = 0;
+            }
+            LCD_append_char(ch);
+            if (char_cnt > 7) {
+                LCD_rotate();
+            }
+            char_cnt++;
+
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 
@@ -138,7 +189,7 @@ int keyboard_idle()
 *******************************************************************************/
 unsigned char decode_user_cmd(char *cmd_ucase, char *cmd)
 {
-  return CMD_UNKNOWN;
+    return CMD_UNKNOWN;
 }
 
 /*******************************************************************************
@@ -146,9 +197,9 @@ unsigned char decode_user_cmd(char *cmd_ucase, char *cmd)
 *******************************************************************************/
 void fpga_initialized()
 {
-  LCD_init();
-  LCD_clear();
-  LCD_append_string("KB demo ");
+    LCD_init();
+    LCD_clear();
+    LCD_append_string("KB demo ");
 }
 
 
@@ -157,30 +208,30 @@ void fpga_initialized()
 *******************************************************************************/
 int main(void)
 {
-  unsigned int cnt = 0;
-  char_cnt = 0;
-  last_ch = 0;
+    unsigned int cnt = 0;
+    char_cnt = 0;
+    last_ch = 0;
 
-  initialize_hardware();
-  keyboard_init();
+    initialize_hardware();
+    keyboard_init();
 
-  set_led_d6(1);                       // rozsviceni D6
-  set_led_d5(1);                       // rozsviceni D5
+    set_led_d6(1);                       // rozsviceni D6
+    set_led_d5(1);                       // rozsviceni D5
 
-  field_reset();
-  field_print();
+    shape_spawn();
+    field_print();
 
-  while (1)
-  {
-    delay_ms(10);
-    cnt++;
-    if (cnt > 50)
+    while (1)
     {
-      cnt = 0;
-      flip_led_d6();                   // negace portu na ktere je LED
-    }
+        delay_ms(10);
+        cnt++;
+        if (cnt > 50)
+        {
+            cnt = 0;
+            flip_led_d6();                   // negace portu na ktere je LED
+        }
 
-    keyboard_idle();                   // obsluha klavesnice
-    terminal_idle();                   // obsluha terminalu
-  }         
+        keyboard_idle();                   // obsluha klavesnice
+        terminal_idle();                   // obsluha terminalu
+    }
 }
