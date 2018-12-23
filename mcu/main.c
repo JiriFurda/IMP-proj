@@ -352,6 +352,31 @@ int shape_move(int rowChange, int colChange)
     return 1;
 }
 
+void shape_static()
+{
+    int row;
+    int col;
+
+    for(row = 0; row < 4; row++)
+    {
+        for(col = 0; col < 4; col++)
+        {
+            if(shapes[sCurr][rotation][row][col] == 1)
+                field[sRow+row][sCol+col] = 1;
+        }
+    }
+}
+
+void shape_down()
+{
+    if(!shape_move(1, 0))
+    {
+        shape_static();
+        shape_spawn();
+    }
+}
+
+
 /*******************************************************************************
  * Vypis uzivatelske napovedy (funkce se vola pri vykonavani prikazu "help")
 *******************************************************************************/
@@ -381,7 +406,7 @@ int keyboard_idle()
                 break;
 
             case '5':
-                shape_move(1, 0);
+                shape_down();
                 break;
             case '4':
                 shape_move(0, -1);
