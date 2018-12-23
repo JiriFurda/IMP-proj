@@ -46,6 +46,7 @@
 #include <fitkitlib.h>
 #include <keyboard/keyboard.h>
 #include <lcd/display.h>
+#include <stdlib.h>
 
 char last_ch; //naposledy precteny znak
 char char_cnt;
@@ -70,7 +71,8 @@ int sCol;
 int sCurr;
 int sNext;
 
-char* letters = "IJLOSTZ";
+int lettersCount = 7;
+char letters[] = "IJLOSTZ";
 int shapes[][4][4][4] =
         {
             {
@@ -292,13 +294,25 @@ void field_print(void)
     }
 }
 
+void generate_next_shape(void)
+{
+    sNext = (sCurr+1) % lettersCount; // @todo rand() is not working
+
+    LCD_clear();
+    LCD_append_string("Next shape: ");
+    LCD_append_char(letters[sNext]);
+}
+
 void shape_spawn(void)
 {
+    // @todo Check for collide, if so, then end the game
+
     rotation = 0;
     sRow = 0;
     sCol = 3;
 
-    sCurr = 2;
+    sCurr = sNext;
+    generate_next_shape();
 }
 
 
@@ -484,6 +498,7 @@ int main(void)
     set_led_d6(1);                       // rozsviceni D6
     set_led_d5(1);                       // rozsviceni D5
 
+    generate_next_shape();
     shape_spawn();
     field_print();
 
