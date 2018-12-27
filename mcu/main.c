@@ -47,7 +47,6 @@
 #include <keyboard/keyboard.h>
 #include <lcd/display.h>
 #include <stdlib.h>
-#include <string.h>
 
 char last_ch; //naposledy precteny znak
 char char_cnt;
@@ -392,17 +391,6 @@ void row_clear(int row)
     }
 }
 
-int row_is_empty(int row)
-{
-    int col;
-    for(col = 1; col < 9; col++)
-    {
-        if(field[row][col] == 1)
-            return 0;
-    }
-    return 1;
-}
-
 int row_is_full(int row)
 {
     int col;
@@ -412,17 +400,6 @@ int row_is_full(int row)
             return 0;
     }
     return 1;
-}
-
-int row_get_not_empty(int row)
-{
-    for(row = row-1; row >= 0; row--)
-    {
-        if(!row_is_empty(row))
-            return row;
-    }
-
-    return -1;
 }
 
 int row_copy(int destRow, int srcRow)
@@ -440,8 +417,6 @@ void field_drop(int row)
     {
         if(row-1 >= 0)
         {
-            //row_clear(row);
-            //memcpy(field[row], field[row - 1], 10);
             row_copy(row, row-1);
             row_clear(row-1);
         }
@@ -462,29 +437,6 @@ void field_clear()
             row++; // Check this row again because it changed
         }
     }
-    /*
-    for(row = 7; row > 0; row--)
-    {
-        if(row_is_empty(row)) {
-            int copyRow = row_get_not_empty(row);
-
-            if (copyRow != -1) {
-                // DEBUG
-                int col;
-                for(col = 1; col < 9; col++)
-                {
-                    field[row][col] = 1;
-                }
-            //    memcpy(field[row], field[copyRow], 10);
-                //field[row] = field[copyRow];
-            }
-                else
-                row_clear(row);
-
-        }
-    }
-    */
-
 }
 
 void shape_down()
