@@ -71,6 +71,8 @@ int sCol;
 int sCurr;
 int sNext;
 
+int gameOver = 0;
+
 int lettersCount = 7;
 char letters[] = "IJLOSTZ";
 int shapes[][4][4][4] =
@@ -303,15 +305,38 @@ void generate_next_shape(void)
     LCD_append_char(letters[sNext]);
 }
 
+void game_over(void)
+{
+    LCD_clear();
+    LCD_append_string("GAME OVER!");
+    gameOver = 1;
+}
+
 void shape_spawn(void)
 {
-    // @todo Check for collide, if so, then end the game
+    int newRotation = 0;
+    int newRow = 0;
+    int newCol = 3;
+    int newShape = sNext;
 
-    rotation = 0;
-    sRow = 0;
-    sCol = 3;
+    int row;
+    int col;
 
-    sCurr = sNext;
+    for(row = 0; row < 4; row++)
+    {
+        for(col = 0; col < 4; col++)
+        {
+            if(shapes[newShape][newRotation][row][col] == 1 && field[newRow+row][newCol+col] == 1)
+                return game_over();
+        }
+    }
+
+
+    rotation = newRotation;
+    sRow = newRow;
+    sCol = newCol;
+
+    sCurr = newShape;
     generate_next_shape();
 }
 
@@ -463,6 +488,9 @@ void print_user_help(void)
 *******************************************************************************/
 int keyboard_idle()
 {
+    if(gameOver)
+        return 0;
+
     char ch;
     ch = key_decode(read_word_keyboard_4x4());
     if (ch != last_ch)
@@ -538,7 +566,7 @@ void fpga_initialized()
 {
     LCD_init();
     LCD_clear();
-    LCD_append_string("KB demo ");
+    LCD_append_string("Tetris");
 }
 
 
