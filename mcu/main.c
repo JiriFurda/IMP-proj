@@ -500,8 +500,10 @@ void led_show_row(int led_col){
     //P3OUT = ~p3;
     //P1OUT = ~p1;
 
+
     int row[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
+    /*
     if(!row[0])
         p3 |= BIT0;
 
@@ -510,6 +512,7 @@ void led_show_row(int led_col){
 
     if(!row[3])
         p3 |= BIT3;
+    */
 
     /*
     if(!row[4])
@@ -519,19 +522,33 @@ void led_show_row(int led_col){
         p1 |= BIT5;
     */
 
+    /*
      if(!row[6])
         p3 |= BIT6;
 
     if(!row[7])
         p3 |= BIT7;
+    */
 
     //p3 |= BIT3;
 
     //P3OUT = p3;
     //P1OUT = BIT5;
 
-    P3OUT = 0;
-    P1OUT = 0;
+    if(!row[1])
+        p3 |= BIT1;
+
+    if(!row[3])
+        p3 |= BIT3;
+
+    if(!row[6])
+        p3 |= BIT6;
+
+    if(!row[7])
+        p3 |= BIT7;
+
+    P3OUT = p3;
+    P1OUT = p1;
 }
 
 int led_col = 0;
