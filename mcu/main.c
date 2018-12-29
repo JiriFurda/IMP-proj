@@ -553,14 +553,88 @@ void led_show_row(int led_col){
     P1OUT = p1;
 }
 
-int led_col = 0;
-void led_show_col()
+void led_light_col(int row) // light columns in the row
 {
+    P2DIR = 0;
+
+    if(field[row][1])
+        P2DIR |= BIT0;
+
+    if(field[row][2])
+        P2DIR |= BIT1;
+
+    if(field[row][4])
+        P2DIR |= BIT3;
+
+    if(field[row][5])
+        P2DIR |= BIT4;
+
+    if(field[row][6])
+        P2DIR |= BIT5;
+
+    if(field[row][7])
+        P2DIR |= BIT6;
+
+    if(field[row][8])
+        P2DIR |= BIT7;
+
+    //term_send_crlf();
+    //term_send_num(row);
+}
+
+int led_row = 0;
+void led_light_row() {   // lights whole row
+    led_light_col(led_row);
+
+    switch(led_row)
+    {
+        case 0:
+            P6OUT = ~BIT0;
+            //P3OUT = 0;
+
+            break;
+        case 1:
+            P6OUT = ~BIT1;
+            //P3OUT = BIT1;
+            break;
+        case 2:
+            P6OUT = ~BIT2;
+            //P3OUT = 0;
+            break;
+        case 3:
+            P6OUT = ~BIT3;
+            //P3OUT = BIT1;
+            break;
+        case 4:
+            P6OUT = ~BIT4;
+            //P3OUT = 0;
+            break;
+        case 5:
+            P6OUT = ~BIT5;
+            //P3OUT = BIT1;
+            break;
+        case 6:
+            P6OUT = ~BIT6;
+            //P3OUT = 0;
+            break;
+        case 7:
+            P6OUT = ~BIT7;
+            //P3OUT = BIT1;
+            break;
+    }
+
+
+    led_row = (led_row + 1) % 8;
+
+
+
+    /*
     led_show_row(7-led_col);
 
     P6OUT = ~(1 << (7-led_col));
 
     led_col = (led_col + 1) % 8;
+    */
 }
 
 
@@ -658,8 +732,8 @@ int main(void)
     // CCR0 = 68;
     // CCTL0 = CCIE;
 
-    P1DIR = 96; // 01100000
-    P3DIR = 207; // 11001111
+    //P3DIR = 2; // 00000010
+    //P3DIR = 1;
     P6DIR = 255; // 11111111
 
     while (1)
@@ -674,8 +748,8 @@ int main(void)
         }
          */
 
-        delay_ms(1);
-        led_show_col();
+        delay_ms(100);
+        led_light_row();
 
         keyboard_idle();                   // obsluha klavesnice
         terminal_idle();                   // obsluha terminalu
