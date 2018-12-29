@@ -64,6 +64,18 @@ int field[9][10] =
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
 
+int led_matrix[8][8] =
+        {
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
 //int shape;
 int rotation;
 int sRow;
@@ -286,10 +298,16 @@ void field_print(void)
     {
         for(col = 1; col < 9; col++)
         {
-            if(is_occupied(row, col))
+            if (is_occupied(row, col))
+            {
                 term_send_str("#");
+                led_matrix[row][col-1] = 1;
+            }
             else
+            {
                 term_send_str("_");
+                led_matrix[row][col-1] = 0;
+            }
         }
 
         term_send_crlf();
@@ -474,112 +492,34 @@ void shape_down()
     }
 }
 
-
-void led_show_row(int led_col){
-
-    unsigned char p1 = 0;
-    unsigned char p3 = 0;
-
-    /*
-    led_col = led_col+1;
-
-
-
-
-    p3 |= field[0][led_col];			// ROW 0 - Port 15 (P3M0)
-    p3 |= (field[1][led_col] << 1);	// ROW 1 - Port 16 (P3M1)
-    p3 |= (field[2][led_col] << 2);
-    p3 |= (field[3][led_col] << 3);	// ROW 3 - Port 14 (P3M3)
-    p1 |= (field[4][led_col] << 6);	// ROW 4 - Port 25 (P1M6)
-    p1 |= (field[5][led_col] << 7);	// ROW 5 - Port 28 (P1M5)
-    p3 |= (field[6][led_col] << 6);	// ROW 6 - Port 9 (P3M6)
-    p3 |= (field[7][led_col] << 7);	// ROW 7 - Port 10 (P3M7)
-    */
-
-    //P3OUT = 1;
-    //P3OUT = ~p3;
-    //P1OUT = ~p1;
-
-
-    int row[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
-    /*
-    if(!row[0])
-        p3 |= BIT0;
-
-    if(!row[1])
-        p3 |= BIT1;
-
-    if(!row[3])
-        p3 |= BIT3;
-    */
-
-    /*
-    if(!row[4])
-        p1 |= BIT6; cajk
-
-    if(!row[5])
-        p1 |= BIT5;
-    */
-
-    /*
-     if(!row[6])
-        p3 |= BIT6;
-
-    if(!row[7])
-        p3 |= BIT7;
-    */
-
-    //p3 |= BIT3;
-
-    //P3OUT = p3;
-    //P1OUT = BIT5;
-
-    led_col = led_col+1;
-
-    if(!field[1][led_col])
-        p3 |= BIT1;
-
-    if(!field[3][led_col])
-        p3 |= BIT3;
-
-    if(!field[6][led_col])
-        p3 |= BIT6;
-
-    if(!field[7][led_col])
-        p3 |= BIT7;
-
-    P3OUT = p3;
-    P1OUT = p1;
-}
-
 void led_light_col(int row) // light columns in the row
 {
+    P3DIR &= ~(BIT2);
     P2DIR = 0;
 
-    if(field[row][1])
+    if(led_matrix[row][0])
         P2DIR |= BIT0;
 
-    if(field[row][2])
+    if(led_matrix[row][1])
         P2DIR |= BIT1;
 
-    if(field[row][4])
+    if(led_matrix[row][2])
+        P3DIR |= BIT2;
+
+    if(led_matrix[row][3])
         P2DIR |= BIT3;
 
-    if(field[row][5])
+    if(led_matrix[row][4])
         P2DIR |= BIT4;
 
-    if(field[row][6])
+    if(led_matrix[row][5])
         P2DIR |= BIT5;
 
-    if(field[row][7])
+    if(led_matrix[row][6])
         P2DIR |= BIT6;
 
-    if(field[row][8])
+    if(led_matrix[row][7])
         P2DIR |= BIT7;
-
-    //term_send_crlf();
-    //term_send_num(row);
 }
 
 int led_row = 0;
@@ -590,36 +530,27 @@ void led_light_row() {   // lights whole row
     {
         case 0:
             P6OUT = ~BIT0;
-            //P3OUT = 0;
-
             break;
         case 1:
             P6OUT = ~BIT1;
-            //P3OUT = BIT1;
             break;
         case 2:
             P6OUT = ~BIT2;
-            //P3OUT = 0;
             break;
         case 3:
             P6OUT = ~BIT3;
-            //P3OUT = BIT1;
             break;
         case 4:
             P6OUT = ~BIT4;
-            //P3OUT = 0;
             break;
         case 5:
             P6OUT = ~BIT5;
-            //P3OUT = BIT1;
             break;
         case 6:
             P6OUT = ~BIT6;
-            //P3OUT = 0;
             break;
         case 7:
             P6OUT = ~BIT7;
-            //P3OUT = BIT1;
             break;
     }
 
