@@ -484,9 +484,11 @@ void led_show_row(int led_col){
     led_col = led_col+1;
 
 
+
+
     p3 |= field[0][led_col];			// ROW 0 - Port 15 (P3M0)
     p3 |= (field[1][led_col] << 1);	// ROW 1 - Port 16 (P3M1)
-    p3 |= (field[2][led_col] << 2);	
+    p3 |= (field[2][led_col] << 2);
     p3 |= (field[3][led_col] << 3);	// ROW 3 - Port 14 (P3M3)
     p1 |= (field[4][led_col] << 6);	// ROW 4 - Port 25 (P1M6)
     p1 |= (field[5][led_col] << 7);	// ROW 5 - Port 28 (P1M5)
@@ -497,6 +499,39 @@ void led_show_row(int led_col){
     //P3OUT = 1;
     //P3OUT = ~p3;
     //P1OUT = ~p1;
+
+    int row[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+    if(!row[0])
+        p3 |= BIT0;
+
+    if(!row[1])
+        p3 |= BIT1;
+
+    if(!row[3])
+        p3 |= BIT3;
+
+    /*
+    if(!row[4])
+        p1 |= BIT6; cajk
+
+    if(!row[5])
+        p1 |= BIT5;
+    */
+
+     if(!row[6])
+        p3 |= BIT6;
+
+    if(!row[7])
+        p3 |= BIT7;
+
+    //p3 |= BIT3;
+
+    //P3OUT = p3;
+    //P1OUT = BIT5;
+
+    P3OUT = 0;
+    P1OUT = 0;
 }
 
 int led_col = 0;
@@ -601,8 +636,8 @@ int main(void)
     field_print();
 
     TACTL = TASSEL_1 + MC_2;
-    CCR0 = 68;
-    CCTL0 = CCIE;
+    // CCR0 = 68;
+    // CCTL0 = CCIE;
 
     P1DIR = 96; // 01100000
     P3DIR = 207; // 11001111
@@ -610,6 +645,7 @@ int main(void)
 
     while (1)
     {
+        /*
         delay_ms(10);
         cnt++;
         if (cnt > 50)
@@ -617,16 +653,21 @@ int main(void)
             cnt = 0;
             flip_led_d6();                   // negace portu na ktere je LED
         }
+         */
+
+        delay_ms(1);
+        led_show_col();
 
         keyboard_idle();                   // obsluha klavesnice
         terminal_idle();                   // obsluha terminalu
     }
 }
 
-
+/*
 interrupt (TIMERA0_VECTOR) Timer_A (void)
 {
     led_show_col();
     CCR0 += 68; // plan next interrupt
 }
+*/
 
