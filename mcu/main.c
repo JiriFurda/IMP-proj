@@ -535,16 +535,18 @@ void led_show_row(int led_col){
     //P3OUT = p3;
     //P1OUT = BIT5;
 
-    if(!row[1])
+    led_col = led_col+1;
+
+    if(!field[1][led_col])
         p3 |= BIT1;
 
-    if(!row[3])
+    if(!field[3][led_col])
         p3 |= BIT3;
 
-    if(!row[6])
+    if(!field[6][led_col])
         p3 |= BIT6;
 
-    if(!row[7])
+    if(!field[7][led_col])
         p3 |= BIT7;
 
     P3OUT = p3;
