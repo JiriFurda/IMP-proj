@@ -64,6 +64,18 @@ int field[9][10] =
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
         };
 
+int led_matrix[8][8] =
+        {
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
 //int shape;
 int rotation;
 int sRow;
@@ -286,10 +298,16 @@ void field_print(void)
     {
         for(col = 1; col < 9; col++)
         {
-            if(is_occupied(row, col))
+            if (is_occupied(row, col))
+            {
                 term_send_str("#");
+                led_matrix[row][col-1] = 1;
+            }
             else
+            {
                 term_send_str("_");
+                led_matrix[row][col-1] = 0;
+            }
         }
 
         term_send_crlf();
@@ -474,6 +492,84 @@ void shape_down()
     }
 }
 
+void led_light_col(int row) // light columns in the row
+{
+    P3DIR &= ~(BIT2);
+    P2DIR = 0;
+
+    if(led_matrix[row][0])
+        P2DIR |= BIT0;
+
+    if(led_matrix[row][1])
+        P2DIR |= BIT1;
+
+    if(led_matrix[row][2])
+        P3DIR |= BIT2;
+
+    if(led_matrix[row][3])
+        P2DIR |= BIT3;
+
+    if(led_matrix[row][4])
+        P2DIR |= BIT4;
+
+    if(led_matrix[row][5])
+        P2DIR |= BIT5;
+
+    if(led_matrix[row][6])
+        P2DIR |= BIT6;
+
+    if(led_matrix[row][7])
+        P2DIR |= BIT7;
+}
+
+int led_row = 0;
+void led_light_row()
+{   // lights whole row
+    switch(led_row)
+    {
+        case 0:
+            P6OUT = ~BIT0;
+            break;
+        case 1:
+            P6OUT = ~BIT1;
+            break;
+        case 2:
+            P6OUT = ~BIT2;
+            break;
+        case 3:
+            P6OUT = ~BIT3;
+            break;
+        case 4:
+            P6OUT = ~BIT4;
+            break;
+        case 5:
+            P6OUT = ~BIT5;
+            break;
+        case 6:
+            P6OUT = ~BIT6;
+            break;
+        case 7:
+            P6OUT = ~BIT7;
+            break;
+    }
+
+    led_light_col(led_row);
+
+    led_row = (led_row + 1) % 8;
+
+
+
+    /*
+    led_show_row(7-led_col);
+
+    P6OUT = ~(1 << (7-led_col));
+
+    led_col = (led_col + 1) % 8;
+    */
+}
+
+
+
 
 /*******************************************************************************
  * Vypis uzivatelske napovedy (funkce se vola pri vykonavani prikazu "help")
@@ -518,33 +614,6 @@ int keyboard_idle()
         }
 
         field_print();
-
-
-        /*
-        if (ch != 0)
-        {
-
-            term_send_crlf();
-            term_send_str("Na klavesnici byla stisknuta klavesa \'");
-            term_send_char(ch);
-            term_send_char('\'');
-            term_send_crlf();
-            term_send_str(" >");
-
-
-
-            if (char_cnt == 16) {
-                LCD_clear();
-                LCD_append_string("KB demo ");
-                char_cnt = 0;
-            }
-            LCD_append_char(ch);
-            if (char_cnt > 7) {
-                LCD_rotate();
-            }
-            char_cnt++;
-        }
-         */
     }
     return 0;
 }
@@ -580,6 +649,7 @@ int main(void)
     last_ch = 0;
 
     initialize_hardware();
+    WDG_stop();
     keyboard_init();
 
     set_led_d6(1);                       // rozsviceni D6
@@ -589,15 +659,13 @@ int main(void)
     shape_spawn();
     field_print();
 
+    TACTL = TASSEL_1 + MC_2;
+    P6DIR = 255; // 11111111
+
     while (1)
     {
-        delay_ms(10);
-        cnt++;
-        if (cnt > 50)
-        {
-            cnt = 0;
-            flip_led_d6();                   // negace portu na ktere je LED
-        }
+        delay_ms(1);
+        led_light_row();
 
         keyboard_idle();                   // obsluha klavesnice
         terminal_idle();                   // obsluha terminalu
