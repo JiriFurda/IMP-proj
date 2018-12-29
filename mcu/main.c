@@ -523,9 +523,8 @@ void led_light_col(int row) // light columns in the row
 }
 
 int led_row = 0;
-void led_light_row() {   // lights whole row
-    led_light_col(led_row);
-
+void led_light_row()
+{   // lights whole row
     switch(led_row)
     {
         case 0:
@@ -554,6 +553,7 @@ void led_light_row() {   // lights whole row
             break;
     }
 
+    led_light_col(led_row);
 
     led_row = (led_row + 1) % 8;
 
@@ -660,38 +660,14 @@ int main(void)
     field_print();
 
     TACTL = TASSEL_1 + MC_2;
-    // CCR0 = 68;
-    // CCTL0 = CCIE;
-
-    //P3DIR = 2; // 00000010
-    //P3DIR = 1;
     P6DIR = 255; // 11111111
 
     while (1)
     {
-        /*
-        delay_ms(10);
-        cnt++;
-        if (cnt > 50)
-        {
-            cnt = 0;
-            flip_led_d6();                   // negace portu na ktere je LED
-        }
-         */
-
-        delay_ms(100);
+        delay_ms(1);
         led_light_row();
 
         keyboard_idle();                   // obsluha klavesnice
         terminal_idle();                   // obsluha terminalu
     }
 }
-
-/*
-interrupt (TIMERA0_VECTOR) Timer_A (void)
-{
-    led_show_col();
-    CCR0 += 68; // plan next interrupt
-}
-*/
-
