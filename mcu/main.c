@@ -581,9 +581,12 @@ void shape_down()
  */
 void led_light_col(int led_row)
 {
+    // Reset columns
     P3DIR &= ~(BIT2);
     P2DIR = 0;
 
+
+    // Light up occupied columns
     if(led_matrix[led_row][0])
         P2DIR |= BIT0;
 
@@ -615,7 +618,8 @@ void led_light_col(int led_row)
  * @param led_row row to be lit
  */
 void led_light_row(int led_row)
-{   // lights whole row
+{
+    // Light up row
     switch(led_row)
     {
         case 0:
@@ -644,6 +648,7 @@ void led_light_row(int led_row)
             break;
     }
 
+    // Light up columns for the row
     led_light_col(led_row);
 }
 
