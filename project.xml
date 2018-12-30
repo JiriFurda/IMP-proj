@@ -2,11 +2,11 @@
 <project outputprefix="kblcd">
 
     <!--  Project description -->
-    <name>Demo - Klávesnice a LCD</name>
-    <author>Zdeněk Vašíček</author>
-    <authoremail>vasicek@fit.vutbr.cz</authoremail>
-    <revision>20090201</revision>
-    <description>Aplikace demonstrující využití LCD displeje a klávesnice. Naposledny stisknutá klávesa je uvedena na LCD displeji.</description>
+    <name>IMP 2018 - 8x8 LED Tetris</name>
+    <author>Jiří Furda</author>
+    <authoremail>xfurda00@fit.vutbr.cz</authoremail>
+    <revision>20181230</revision>
+    <description>Projekt do IMP 2018 - Hra Mini-Tetris na maticovém displeji.</description>
 
     <!--  MCU part -->
     <mcu>
