@@ -1,4 +1,4 @@
-#  Mini-Tetris game on matrix display (IMP project)
+#  Mini-Tetris game on Matrix Display (IMP project)
 Bachelor study at FIT VUT Brno  
 5th semester - winter 2018  
 Subject: **Microprocessors and Embedded Systems (IMP)**  
